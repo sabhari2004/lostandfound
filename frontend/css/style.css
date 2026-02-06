@@ -1,0 +1,204 @@
+/* --- GENERAL STYLES --- */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+header {
+    background-color: rgba(44, 62, 80, 0.9);
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+    position: relative;
+}
+
+.home-page header {
+    background: rgba(30, 27, 75, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid #6366f1;
+    padding: 50px 20px;
+}
+
+/* --- NEW AUTH GROUPING (THE FIX) --- */
+/* This container pins BOTH buttons to the top right corner together */
+.top-auth-group {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 3000; 
+    display: flex;
+    gap: 10px; /* Controls the space between Sign Up and Login */
+}
+
+/* Shared styling for top buttons */
+.signup-btn-top, .login-btn-top {
+    padding: 10px 20px;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: 0.3s ease;
+    font-size: 14px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    display: inline-block;
+}
+
+/* Green Sign Up Button */
+.signup-btn-top {
+    background-color: #2ecc71;
+    color: white;
+}
+
+/* Red Login Button */
+.login-btn-top {
+    background-color: #ef4444;
+    color: white;
+}
+
+.signup-btn-top:hover, .login-btn-top:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+/* --- SIGN UP PAGE SPECIFIC BACKGROUND (RECTIFIED) --- */
+.signup-page {
+    /* 1. Added ../ to the path so it finds your image folder correctly */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../images/phone.jpeg');
+    
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    
+    /* 2. Added min-height to ensure the photo covers the whole screen */
+    min-height: 100vh; 
+    display: flex;
+    flex-direction: column;
+    color: white; 
+}
+
+/* Ensure the signup box inside stays clean and readable */
+.signup-page .content {
+    background: rgba(255, 255, 255, 0.95); /* Light frosted glass effect */
+    color: #333;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    
+    /* 3. Centering the box */
+    margin: auto; 
+    width: 100%;
+    max-width: 400px; 
+}
+/* --- MERGED NAVIGATION --- */
+nav {
+    background-color: #3498db;
+    padding: 10px 30px;
+    display: flex; 
+    justify-content: center; /* Centers Home, Upload, View */
+    align-items: center;
+}
+
+nav a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* --- BACKGROUNDS --- */
+.home-page {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../images/phone.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.view-page {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../images/phone.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: white;
+}
+
+/* --- CONTENT BOX STYLING --- */
+.content {
+    padding: 30px;
+    margin: 40px auto;
+    max-width: 800px;
+    border-radius: 10px;
+}
+
+.home-page .content {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+}
+.footer-box-link {
+    text-decoration: none;
+    display: block; /* Makes the whole area clickable */
+    margin: 40px auto;
+    max-width: 800px;
+}
+
+/* The Box Structure */
+.contact-footer-box {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    padding: 30px;
+    text-align: center;
+    border-radius: 15px;
+    border: 2px solid rgba(241, 245, 249, 0.2);
+    transition: all 0.3s ease;
+    box-shadow: 0px 25px 50px -12px rgba(0,0,0,0.5);
+}
+
+.contact-footer-box h3 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.contact-footer-box h3 span {
+    color: #3498db;
+}
+
+.contact-footer-box p {
+    margin-top: 10px;
+    font-size: 16px;
+    opacity: 0.8;
+}
+
+/* Hover Effect - The box lifts and glows when hovered */
+.contact-footer-box:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: white;
+    box-shadow: 0px 8px 20px rgba(0,0,0,0.4);
+}
+/* --- STATUS BADGES --- */
+.status-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.status-available { background-color: #2ecc71; color: white; }
+.status-claimed { background-color: #e74c3c; color: white; }
+
+/* --- SUCCESS MESSAGE --- */
+#success-message {
+    display: none;
+    background-color: rgba(46, 204, 113, 0.2);
+    border: 1px solid #2ecc71;
+    color: #2ecc71;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    text-align: center;
+    font-weight: bold;
+}

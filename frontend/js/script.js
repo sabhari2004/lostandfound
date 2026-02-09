@@ -4,8 +4,6 @@ const API_BASE_URL = "http://localhost:8080/api";
 // 1. REGISTER USER
 // ===========================
 async function registerUser() {
-    console.log("Register button clicked!");
-
     const name = document.getElementById("newName").value;
     const email = document.getElementById("newEmail").value;
     const pass = document.getElementById("newPassword").value;
@@ -21,11 +19,7 @@ async function registerUser() {
         return;
     }
 
-    const userData = {
-        name: name,
-        email: email,
-        password: pass
-    };
+    const userData = { name: name, email: email, password: pass };
 
     try {
         const response = await fetch(`${API_BASE_URL}/users/register`, {
@@ -47,7 +41,7 @@ async function registerUser() {
 }
 
 // ===========================
-// 2. LOGIN USER
+// 2. LOGIN USER (User & Admin)
 // ===========================
 async function loginUser() {
     const email = document.getElementById("email").value;
@@ -58,7 +52,7 @@ async function loginUser() {
         return;
     }
 
-    // Admin Check
+    // --- ADMIN CHECK ---
     if (email === "rsnithyashree22bit071@gmail.com" && password === "Lf123") {
         localStorage.setItem("userEmail", email);
         localStorage.setItem("isAdmin", "true");
@@ -67,6 +61,7 @@ async function loginUser() {
         return;
     }
 
+    // --- NORMAL USER LOGIN ---
     const loginData = { email: email, password: password };
 
     try {
@@ -101,23 +96,18 @@ function logout() {
 }
 
 // ===========================
-// 4. UPLOAD ITEM (Corrected!)
+// 4. UPLOAD ITEM
 // ===========================
 function saveItem() {
-    console.log("Upload button clicked!");
-
-    // GET ELEMENTS SAFE CHECK
+    // Safety Check: Only run on upload page
     const itemEl = document.getElementById("item");
-    const uploaderEl = document.getElementById("uploaderEmail");
-    const imageEl = document.getElementById("image");
-
-    // If elements don't exist, stop (prevents error on other pages)
-    if (!itemEl || !uploaderEl || !imageEl) return;
+    if (!itemEl) return;
 
     const item = itemEl.value;
     const location = document.getElementById("location").value;
     const desc = document.getElementById("desc").value;
-    const uploaderEmail = uploaderEl.value;
+    const uploaderEmail = document.getElementById("uploaderEmail").value;
+    const imageEl = document.getElementById("image");
 
     if (!item || !uploaderEmail || imageEl.files.length === 0) {
         alert("Please fill all fields and upload an image");
@@ -161,44 +151,152 @@ function saveItem() {
 }
 
 // ===========================
-// 5. LOAD ITEMS
+// 5. RENDER ITEMS (Handles Display & Admin Buttons)
 // ===========================
-async function loadItems() {
-    const container = document.getElementById("itemsContainer");
-    if (!container) return;
+function renderItems(items) {
+    const displayTarget = document.getElementById("itemDisplay") || document.getElementById("itemsContainer");
+    if (!displayTarget) return;
 
-    try {
-        const response = await fetch(`${API_BASE_URL}/items`);
-        const items = await response.json();
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
 
-        container.innerHTML = "";
+    displayTarget.innerHTML = ""; // Clear list
 
-        if (items.length === 0) {
-            container.innerHTML = "<p style='color:white; text-align:center;'>No items found.</p>";
-            return;
+    if (items.length === 0) {
+        displayTarget.innerHTML = "<p style='color:white; text-align:center;'>No items found.</p>";
+        return;
+    }
+
+    items.forEach(item => {
+        let imageUrl = item.image ? item.image : 'images/default.jpg';
+
+        let card = `
+            <div class="item-card" style="background:black; padding:20px; border-radius:15px; width:320px; margin:10px; color:white; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+                <span class="status-badge" style="background:lightskyblue; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:bold; color:white;">Available</span>
+                <br><br>
+                <img src="${imageUrl}" style="width:100%; height:200px; object-fit:cover; border-radius:10px; margin-bottom:10px;">
+                <p><strong>Item:</strong> ${item.name}</p>
+                <p><strong>Location:</strong> ${item.location}</p>
+                <p><strong>Description:</strong> ${item.description}</p>
+                <p style="font-size:12px; color:gray;">Posted: ${item.date}</p>
+
+                <button onclick="alert('Contact Owner: ${item.uploaderEmail}')"
+                        style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%; margin-top:10px; font-weight: bold;">
+                    Claim Item & Say Thanks
+                </button>
+        `;
+
+        // --- ADMIN ONLY: DELETE BUTTON ---
+        if (isAdmin) {
+            card += `
+                <button onclick="deleteItem('${item.id}')"
+                        style="background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%; margin-top:10px; font-weight: bold;">
+                    🗑️ Delete Post (Admin)
+                </button>
+            `;
         }
 
-        items.forEach(item => {
-            const card = `
-                <div class="item-card" style="background:white; padding:15px; margin:10px; border-radius:10px; width:300px; display:inline-block; vertical-align:top;">
-                    <img src="${item.image}" alt="Item" style="width:100%; height:200px; object-fit:cover; border-radius:5px;">
-                    <h3 style="color:black;">${item.name}</h3>
-                    <p style="color:black;"><strong>Location:</strong> ${item.location}</p>
-                    <p style="color:black;"><strong>Description:</strong> ${item.description}</p>
-                    <p style="color:gray;"><small>${item.date}</small></p>
-                    <button style="background:green; color:white; padding:5px 10px; border:none; border-radius:3px; cursor:pointer;" onclick="alert('Contact: ${item.uploaderEmail}')">Contact Finder</button>
-                </div>
-            `;
-            container.innerHTML += card;
-        });
+        card += `</div>`; // Close card div
+        displayTarget.innerHTML += card;
+    });
+}
 
+// ===========================
+// 6. LOAD & SEARCH
+// ===========================
+async function loadItems() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/items?t=${Date.now()}`);
+        const items = await response.json();
+
+        const countEl = document.getElementById("itemCount");
+        if(countEl) countEl.innerText = `Total Items: ${items.length}`;
+
+        renderItems(items);
     } catch (error) {
         console.error("Error loading items:", error);
-        container.innerHTML = "<p>Error loading items.</p>";
     }
 }
 
-// Run loadItems only if we are on the view page
+async function searchItems() {
+    const query = document.getElementById("searchInput").value;
+    if (!query) {
+        loadItems();
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/items/search?query=${query}`);
+        const items = await response.json();
+        renderItems(items);
+    } catch (error) {
+        console.error("Search Error:", error);
+    }
+}
+
+// ===========================
+// 7. ADMIN ACTIONS (Delete)
+// ===========================
+async function deleteItem(itemId) {
+    if (!confirm("ADMIN: Are you sure you want to delete this post?")) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/items/delete/${itemId}`, {
+            method: "DELETE"
+        });
+
+        if (response.ok) {
+            alert("Item deleted successfully!");
+            loadItems(); // Refresh list immediately
+        } else {
+            alert("Failed to delete item.");
+        }
+    } catch (error) {
+        console.error("Delete Error:", error);
+    }
+}
+
+async function deleteAllItems() {
+    const password = prompt("ADMIN SECURITY CHECK:\nEnter password to WIPE ALL DATA:");
+
+    if (password !== "Lf123") {
+        alert("Wrong password!");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/items/deleteAll`, {
+            method: "DELETE"
+        });
+
+        if (response.ok) {
+            alert("DATABASE WIPED: All items deleted.");
+            loadItems();
+        }
+    } catch (error) {
+        console.error("Delete All Error:", error);
+    }
+}
+
+// ===========================
+// 8. AUTO-RUN (On Page Load)
+// ===========================
 if (window.location.pathname.endsWith("view.html")) {
-    window.onload = loadItems;
+    window.onload = function() {
+        const userEmail = localStorage.getItem("userEmail");
+        const isAdmin = localStorage.getItem("isAdmin") === "true";
+
+        if (userEmail && document.getElementById("welcomeText")) {
+            document.getElementById("welcomeText").innerText = "Logged in as: " + userEmail;
+        }
+
+        // Show Admin UI elements
+        if (isAdmin) {
+            const adminBadge = document.getElementById("adminStatus");
+            const deleteAllBtn = document.getElementById("deleteAllBtn");
+            if (adminBadge) adminBadge.style.display = "inline";
+            if (deleteAllBtn) deleteAllBtn.style.display = "inline-block";
+        }
+
+        loadItems(); // Load data from DB
+    };
 }

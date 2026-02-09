@@ -26,4 +26,29 @@ public class ItemController {
     public List<Item> getAllItems() {
         return itemRepository.findAll();
     }
+
+    // ... inside ItemController class ...
+
+    // 3. Search Items (New!)
+    @GetMapping("/search")
+    public List<Item> searchItems(@RequestParam("query") String query) {
+        // This passes the user's search text to BOTH name and location
+        return itemRepository.findByNameContainingIgnoreCaseOrLocationContainingIgnoreCase(query, query);
+    }
+
+    // ... inside ItemController ...
+
+    // 4. Delete ONE Item (By ID)
+    @DeleteMapping("/delete/{id}")
+    public String deleteItem(@PathVariable String id) {
+        itemRepository.deleteById(id);
+        return "Item deleted successfully";
+    }
+
+    // 5. Delete ALL Items (Dangerous Admin Feature)
+    @DeleteMapping("/deleteAll")
+    public String deleteAllItems() {
+        itemRepository.deleteAll();
+        return "All items deleted successfully";
+    }
 }

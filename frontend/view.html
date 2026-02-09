@@ -3,24 +3,16 @@
 <head>
     <title>View Found Items</title>
     <link rel="stylesheet" href="css/style.css">
-    
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script type="text/javascript">
-       (function(){
-          emailjs.init("uR0QTgqjNgOUbXfXq"); 
-       })();
-    </script>
 
     <style>
-        /* New User Info Bar */
+        /* Simple styling for the Admin Bar */
         .user-info-bar {
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             color: white;
             padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
         }
         .logout-link {
             color: #ff7675;
@@ -28,40 +20,11 @@
             font-weight: bold;
             cursor: pointer;
         }
-
         #itemDisplay {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
             justify-content: center;
             padding: 20px;
-        }
-        .item-card {
-            background-color: black; 
-            padding: 20px;
-            color: white;
-            border-radius: 15px;
-            width: 320px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            text-align: left;
-        }
-        .status-badge {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 15px;
-            background-color: lightskyblue; 
-            color: white;
-        }
-        .item-img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 10px;
         }
         .action-bar {
             text-align: center;
@@ -73,134 +36,42 @@
             border-radius: 30px;
             border: none;
             outline: none;
+            font-size: 16px;
         }
     </style>
 </head>
 <body class="view-page">
 
-    <div class="user-info-bar">
-        <span id="welcomeText">Welcome, Guest</span>
-        <span id="adminStatus" style="color: #55efc4; font-weight: bold; display: none;">ADMIN ACCESS</span>
-        <a onclick="logout()" class="logout-link">Logout</a>
+<div class="user-info-bar">
+    <span id="welcomeText">Welcome, Guest</span>
+    <span id="adminStatus" style="color: #55efc4; font-weight: bold; display: none;">ADMIN ACCESS</span>
+    <a onclick="logout()" class="logout-link">Logout</a>
+</div>
+
+<nav>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="upload.html">Upload Found Item</a>
+        <a href="view.html">View Items</a>
     </div>
+</nav>
 
-    <nav>
-        <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="upload.html">Upload Found Item</a>
-            <a href="view.html">View Items</a>
-        </div>
-        <a href="login.html" class="login-btn">Login</a>
-    </nav>
+<h2 style="text-align: center; color: white; margin-top: 30px;">Found Items Directory</h2>
 
-    <h2 style="text-align: center; color: white; margin-top: 30px;">Found Items Directory</h2>
+<div class="action-bar">
+    <input type="text" id="searchInput" placeholder="Search by name or location..." onkeyup="searchItems()">
 
-    <div class="action-bar">
-        <input type="text" id="searchInput" placeholder="Search by name or location..." onkeyup="filterItems()">
-        <p id="itemCount" style="color: white; margin-top: 10px;"></p>
-        <a href="upload.html" style="color: lightskyblue; text-decoration: none; font-weight: bold;">➕ Add Another Item</a>
-    </div>
+    <p id="itemCount" style="color: white; margin-top: 10px;">Loading items...</p>
+    <a href="upload.html" style="color: lightskyblue; text-decoration: none; font-weight: bold;">➕ Add Another Item</a>
 
-    <div id="itemDisplay"></div>
+    <button id="deleteAllBtn" onclick="deleteAllItems()" style="display:none; background:red; color:white; border:none; padding:10px; border-radius:5px; cursor:pointer; margin-left:10px;">
+        ⚠️ Delete ALL Records
+    </button>
+</div>
 
-    <script>
-        // Load data from Storage
-        let allItems = JSON.parse(localStorage.getItem("foundItems")) || [];
+<div id="itemDisplay"></div>
 
-        // Run this check as soon as page loads
-        window.onload = function() {
-            const userEmail = localStorage.getItem("userEmail");
-            const isAdmin = localStorage.getItem("isAdmin") === "true";
+<script src="js/script.js"></script>
 
-            if (userEmail) {
-                document.getElementById("welcomeText").innerText = "Logged in as: " + userEmail;
-            }
-            if (isAdmin) {
-                document.getElementById("adminStatus").style.display = "inline";
-            }
-            
-            renderItems(allItems);
-        };
-
-        function renderItems(itemsToBox) {
-            const displayContainer = document.getElementById("itemDisplay");
-            const counter = document.getElementById("itemCount");
-            displayContainer.innerHTML = "";
-            counter.innerText = `Total Items: ${itemsToBox.length}`;
-
-            // Check Admin Status inside the render function
-            const isAdmin = localStorage.getItem("isAdmin") === "true";
-
-            if (itemsToBox.length > 0) {
-                itemsToBox.forEach((item, index) => {
-                    let cardHTML = `
-                        <div class="item-card">
-                            <span id="statusBadge-${index}" class="status-badge">Available</span>
-                            <br>
-                            <img src="${item.image}" class="item-img">
-                            <p><strong>Item:</strong> ${item.item}</p>
-                            <p><strong>Location:</strong> ${item.location}</p>
-                            <p><strong>Description:</strong> ${item.desc}</p>
-                            
-                            <button id="claimBtn-${index}" 
-                                    onclick="claimItem('${item.uploaderEmail}', '${item.item}', ${index})" 
-                                    style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%; margin-bottom: 10px; font-weight: bold;">
-                                Claim Item & Say Thanks
-                            </button>`;
-
-                    // ONLY ADD REMOVE BUTTON IF ADMIN IS TRUE
-                    if (isAdmin) {
-                        cardHTML += `
-                            <button onclick="deleteItem(${index})" 
-                                    style="background: #e74c3c; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 12px; font-weight: bold;">
-                                🗑️ Remove Post (Admin Only)
-                            </button>`;
-                    }
-
-                    cardHTML += `</div>`;
-                    displayContainer.innerHTML += cardHTML;
-                });
-            } else {
-                displayContainer.innerHTML = "<p style='color: white;'>No items found.</p>";
-            }
-        }
-
-        function filterItems() {
-            const query = document.getElementById("searchInput").value.toLowerCase();
-            const filtered = allItems.filter(item => 
-                item.item.toLowerCase().includes(query) || 
-                item.location.toLowerCase().includes(query)
-            );
-            renderItems(filtered);
-        }
-
-        function deleteItem(index) {
-            if (confirm("Permanently delete this post?")) {
-                allItems.splice(index, 1);
-                localStorage.setItem("foundItems", JSON.stringify(allItems));
-                renderItems(allItems);
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem("userEmail");
-            localStorage.removeItem("isAdmin");
-            alert("Logging out...");
-            window.location.href = "login.html";
-        }
-
-        function claimItem(uploaderEmail, itemName, index) {
-            emailjs.send("service_7lxlpvk", "template_izc5een", {
-                to_email: uploaderEmail,
-                item_name: itemName
-            }).then(function() {
-                alert("Email sent to " + uploaderEmail);
-                document.getElementById(`statusBadge-${index}`).innerText = "Claimed";
-                document.getElementById(`statusBadge-${index}`).style.backgroundColor = "#e74c3c";
-                document.getElementById(`claimBtn-${index}`).disabled = true;
-                document.getElementById(`claimBtn-${index}`).innerText = "Notified";
-            });
-        }
-    </script>
 </body>
 </html>

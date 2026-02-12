@@ -1,43 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Lost & Found</title>
+    <meta charset="UTF-8">
+    <title>Lost & Found Portal</title>
     <link rel="stylesheet" href="css/style.css">
-
 </head>
-<body class="home-page">
-
-<header>
-    <h1>Lost & Found System</h1>
-    <p>Helping retrieve misplaced objects easily</p>
-</header>
+<body>
 
 <nav>
+    <div class="logo">Lost & Found.</div>
     <div class="nav-links">
         <a href="index.html">Home</a>
-        <a href="upload.html">Upload Found Item</a>
-        <a href="view.html">View Items</a>
-    </div>
+        <a href="view.html">Browse</a>
+        <a href="login.html">Login</a>
 
-    <div class="top-auth-group">
-        <a href="signup.html" class="signup-btn">Sign Up</a>
-        <a href="login.html" class="login-btn">Login</a>
+        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
     </div>
 </nav>
 
-<section class="content">
-    <h2>About the Project</h2>
-    <p>
-        If someone finds an item, they can upload its image and location.
-        The rightful owner can view and retrieve it easily.
-    </p>
-</section>
-<a href="contact.html" class="footer-box-link">
-    <div class="contact-footer-box">
-        <h3>Questions? <span>Contact Us</span></h3>
-        <p>Click here to get in touch with the Lost & Found support team</p>
-    </div>
-</a>
-</body>
+<div class="hero-container">
+    <span style="background:#e6f7ff; color:#0061ff; padding:8px 20px; border-radius:30px; font-weight:600; font-size:0.9rem; margin-bottom:20px; animation:fadeIn 1s;">Campus Utility Tool</span>
 
+    <h1 class="hero-title">Lost It? List It.<br>Found It? Return It.</h1>
+    <p class="hero-subtitle">The official student portal for recovering lost belongings. Simple, fast, and community-driven.</p>
+
+    <div style="display:flex; gap:20px;">
+        <a href="view.html" class="cta-button">Browse Items</a>
+        <a href="login.html" class="cta-button" style="background:white; color:#333; box-shadow:0 5px 15px rgba(0,0,0,0.05);">Login to Report</a>
+    </div>
+</div>
+
+</body>
 </html>

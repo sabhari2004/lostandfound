@@ -1,66 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Login - Lost & Found</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        body {
-            background-image: linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),url('images/phone.jpeg');
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-        .login-box {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            width: 350px;
-            text-align: center;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-        .login-btn-submit {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 12px;
-            width: 100%;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 16px;
-        }
-        .login-btn-submit:hover {
-            background-color: #2980b9;
-        }
-    </style>
 </head>
 <body>
 
-    <div class="login-box">
-        <h2>Welcome Back</h2>
-        <p>Login to manage found items</p>
-        
-        <input type="email" id="email" placeholder="Email Address" required>
-        <input type="password" id="password" placeholder="Password" required>
-        
-        <button type="button" class="login-btn-submit" onclick="loginUser()">Login</button>
-        
-        <p style="margin-top: 20px; font-size: 14px;">
-            Don't have an account? <a href="signup.html" style="color: #3498db;">Sign Up</a>
-        </p>
-    </div>
+<nav>
+    <div class="logo">Lost & Found.</div>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="view.html">Browse</a>
+        <a href="login.html">Login</a>
 
-    <script src="js/script.js"></script>
+        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+    </div>
+</nav>
+
+<div class="form-wrapper">
+    <div class="form-card">
+        <h2>Welcome Back</h2>
+        <p>Enter your credentials to access your account.</p>
+
+        <div class="input-group">
+            <label>Email Address</label>
+            <input type="email" id="email" placeholder="student@college.edu">
+        </div>
+
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="••••••••">
+        </div>
+
+        <button onclick="loginUser()" class="submit-btn">Login</button>
+
+        <div class="form-link">
+            Don't have an account? <a href="register.html">Sign Up</a>
+        </div>
+    </div>
+</div>
+
+<script src="js/script.js"></script>
 </body>
 </html>

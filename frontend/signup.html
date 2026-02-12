@@ -1,94 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Sign Up - Lost & Found</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        body {
-            /* Matching background with login for consistency */
-            background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
-                              url('images/phone.jpeg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .signup-box {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            width: 380px;
-            text-align: center;
-            backdrop-filter: blur(5px);
-        }
-
-        h2 { color: #2c3e50; margin-bottom: 5px; }
-        p { color: #666; margin-bottom: 20px; font-size: 14px; }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-sizing: border-box;
-        }
-
-        .signup-btn-submit {
-            background-color: #2ecc71; /* Green for "Create" */
-            color: white;
-            border: none;
-            padding: 14px;
-            width: 100%;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 16px;
-            margin-top: 10px;
-            transition: 0.3s;
-        }
-
-        .signup-btn-submit:hover {
-            background-color: #27ae60;
-            transform: translateY(-2px);
-        }
-
-        .footer-links {
-            margin-top: 20px;
-            font-size: 14px;
-        }
-
-        .footer-links a {
-            color: #3498db;
-            text-decoration: none;
-        }
-    </style>
 </head>
 <body>
 
-    <div class="signup-box">
+<nav>
+    <div class="logo">Lost & Found.</div>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="view.html">Browse</a>
+        <a href="login.html">Login</a>
+
+        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+    </div>
+</nav>
+<div class="form-wrapper">
+    <div class="form-card">
         <h2>Create Account</h2>
-        <p>Join the Lost & Found community</p>
-        
-        <input type="text" id="newName" placeholder="Full Name">
-        <input type="email" id="newEmail" placeholder="Email Address">
-        <input type="password" id="newPassword" placeholder="Create Password">
-        <input type="password" id="confirmPassword" placeholder="Confirm Password">
-        
-        <button type="button" class="signup-btn-submit" onclick="registerUser()">Sign Up</button>
-        
-        <div class="footer-links">
-            Already have an account? <a href="login.html">Login here</a>
+        <p>Join the community to report and claim items.</p>
+
+        <div class="input-group">
+            <label>Full Name</label>
+            <input type="text" id="newName" placeholder="John Doe">
+        </div>
+
+        <div class="input-group">
+            <label>Email Address</label>
+            <input type="email" id="newEmail" placeholder="student@college.edu">
+        </div>
+
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="newPassword" placeholder="••••••••">
+        </div>
+
+        <div class="input-group">
+            <label>Confirm Password</label>
+            <input type="password" id="confirmPassword" placeholder="••••••••">
+        </div>
+
+        <button onclick="registerUser()" class="submit-btn">Sign Up</button>
+
+        <div style="text-align: center; margin-top: 20px; font-size: 0.9rem;">
+            Already have an account? <a href="login.html" style="color: var(--accent-color);">Login</a>
         </div>
     </div>
+</div>
 
-    <script src="js/script.js"></script>
+<script src="js/script.js"></script>
 </body>
 </html>

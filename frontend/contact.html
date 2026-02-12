@@ -1,22 +1,65 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Contact Us</title>
+    <meta charset="UTF-8">
+    <title>Contact Us - Lost & Found</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="dark-page">
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="upload.html">Upload Found Item</a>
-        <a href="view.html">View Items</a>
-        <a href="login.html" class="login-btn">Login</a>
-    </nav>
+<body>
 
-    <section class="content">
-        <h2>Contact Our Team</h2>
-        <p>Email: support@lostandfound.com</p>
-        <p>Phone: +1 234 567 890</p>
-        <p>Office: 123 Tech Street, Innovation City</p>
-    </section>
+<nav>
+    <div class="logo">Lost & Found.</div>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="view.html">Browse</a>
+        <a href="contact.html" style="color: #4facfe;">Contact</a>
+
+        <button id="themeToggle" class="theme-btn">☀️ Light Mode</button>
+    </div>
+</nav>
+
+<div class="hero-container" style="height: auto; padding: 50px 0;">
+    <h1 class="hero-title">Get in Touch</h1>
+    <p class="hero-subtitle">Found a bug? Need help retrieving an item? Contact our support team below.</p>
+</div>
+
+<div class="form-wrapper" style="min-height: auto; padding-bottom: 50px;">
+    <div class="form-card" style="max-width: 600px;">
+        <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+            <div class="input-group" style="flex: 1;">
+                <label>Your Name</label>
+                <input type="text" placeholder="John Doe">
+            </div>
+            <div class="input-group" style="flex: 1;">
+                <label>Your Email</label>
+                <input type="email" placeholder="john@college.edu">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Subject</label>
+            <select>
+                <option>Report a Bug</option>
+                <option>Help with Claiming</option>
+                <option>General Inquiry</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Message</label>
+            <textarea rows="5" placeholder="Describe your issue here..."></textarea>
+        </div>
+
+        <button class="submit-btn" onclick="alert('Message Sent! We will contact you soon.')">Send Message</button>
+
+        <div style="margin-top: 30px; text-align: center; border-top: 1px solid var(--border-color); padding-top: 20px;">
+            <p style="color: var(--secondary-text);">📍 College Campus, Main Block, Room 304</p>
+            <p style="color: var(--secondary-text);">📞 +91 98765 43210</p>
+            <p style="color: var(--secondary-text);">✉️ support@lostfound.edu</p>
+        </div>
+    </div>
+</div>
+
+<script src="js/script.js"></script>
 </body>
 </html>

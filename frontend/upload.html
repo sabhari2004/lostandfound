@@ -1,90 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Upload Found Item</title>
+    <meta charset="UTF-8">
+    <title>Report Item - Lost & Found</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        body {
-            /* 1. Add your background image here */
-            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
-                              url('images/phone.jpeg');
-            
-            /* 2. Make sure the background covers the whole screen */
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-
-        .upload-container {
-            background-color: rgba(255, 255, 255, 0.95); /* Slightly more opaque for readability */
-            padding: 40px;
-            border-radius: 15px;
-            width: 450px;
-            margin: 80px auto; /* Centered with top margin */
-            color: black;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-        }
-
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-        }
-
-        .submit-btn {
-            background-color: lightskyblue;
-            color: black;
-            border: none;
-            padding: 15px;
-            width: 100%;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 16px;
-            margin-top: 10px;
-            transition: background 0.3s;
-        }
-
-        .submit-btn:hover { background-color: #27ae60; }
-    </style>
 </head>
-<body class="upload-page">
+<body>
 
-    <nav>
-        <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="upload.html">Upload Found Item</a>
-            <a href="view.html">View Items</a>
-        </div>
-    </nav>
+<nav>
+    <div class="logo">Lost & Found.</div>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="upload.html">Upload</a>
+        <a href="view.html">Browse</a>
+        <a onclick="logout()" style="cursor:pointer; color:#ff4b4b;">Logout</a>
 
-    <div class="upload-container">
-        <h2 style="text-align: center;">📤 Post a Found Item</h2>
-        <p style="text-align: center; font-size: 14px; color: #666;">Fill in the details to help the owner find their item.</p>
-        
-        <label><b>Item Name:</b></label>
-        <input type="text" id="item" placeholder="What did you find?">
-        
-        <label><b>Location Found:</b></label>
-        <input type="text" id="location" placeholder="Where did you find it?">
-        
-        <label><b>Your Email (Uploader):</b></label>
-        <input type="email" id="uploaderEmail" placeholder="yourname@gmail.com">
-        
-        <label><b>Description:</b></label>
-        <textarea id="desc" rows="3" placeholder="Color, brand, unique marks..."></textarea>
-        
-        <label><b>Upload Image:</b></label>
-        <input type="file" id="image" accept="image/*">
-
-        <button class="submit-btn" type="button" onclick="saveItem()">Upload Item</button>
+        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
     </div>
+</nav>
 
-    <script src="js/script.js"></script>
+<div class="form-wrapper">
+    <div class="form-card" style="max-width: 600px;">
+        <h2>Report Found Item</h2>
+        <p>Please provide as much detail as possible to help the owner.</p>
+
+        <div class="input-group">
+            <label>Item Name</label>
+            <input type="text" id="item" placeholder="e.g. Blue Dell Laptop">
+        </div>
+
+        <div style="display:flex; gap:20px;">
+            <div class="input-group" style="flex:1">
+                <label>Location Found</label>
+                <input type="text" id="location" placeholder="e.g. Library 2nd Floor">
+            </div>
+            <div class="input-group" style="flex:1">
+                <label>Your Email (for contact)</label>
+                <input type="email" id="uploaderEmail" placeholder="you@college.edu">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Description</label>
+            <textarea id="desc" rows="3" placeholder="Any distinguishing marks, stickers, etc."></textarea>
+        </div>
+
+        <div class="input-group">
+            <label>Upload Image</label>
+            <input type="file" id="image" accept="image/*">
+        </div>
+
+        <button onclick="saveItem()" class="submit-btn">Submit Report</button>
+        <button onclick="window.location.href='view.html'" class="submit-btn" style="background:#333; margin-top:10px; color:white;">Cancel</button>
+    </div>
+</div>
+
+<script src="js/script.js"></script>
 </body>
 </html>

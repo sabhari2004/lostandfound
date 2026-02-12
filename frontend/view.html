@@ -1,77 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>View Found Items</title>
+    <meta charset="UTF-8">
+    <title>Browse Items - Lost & Found</title>
     <link rel="stylesheet" href="css/style.css">
-
-    <style>
-        /* Simple styling for the Admin Bar */
-        .user-info-bar {
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logout-link {
-            color: #ff7675;
-            text-decoration: none;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        #itemDisplay {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 20px;
-        }
-        .action-bar {
-            text-align: center;
-            margin: 30px 0;
-        }
-        #searchInput {
-            padding: 12px 20px;
-            width: 350px;
-            border-radius: 30px;
-            border: none;
-            outline: none;
-            font-size: 16px;
-        }
-    </style>
 </head>
 <body class="view-page">
 
-<div class="user-info-bar">
-    <span id="welcomeText">Welcome, Guest</span>
-    <span id="adminStatus" style="color: #55efc4; font-weight: bold; display: none;">ADMIN ACCESS</span>
-    <a onclick="logout()" class="logout-link">Logout</a>
-</div>
-
 <nav>
+    <div class="logo">Lost & Found.</div>
     <div class="nav-links">
         <a href="index.html">Home</a>
-        <a href="upload.html">Upload Found Item</a>
-        <a href="view.html">View Items</a>
+        <a href="upload.html">Upload</a>
+        <a href="view.html">Browse</a>
+        <a onclick="logout()" style="cursor:pointer; color:#ff4b4b;">Logout</a>
+
+        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
     </div>
 </nav>
 
-<h2 style="text-align: center; color: white; margin-top: 30px;">Found Items Directory</h2>
+<div class="search-container">
+    <h2 style="margin-bottom:20px; font-size:2rem; color:#333;">Find Missing Items</h2>
 
-<div class="action-bar">
-    <input type="text" id="searchInput" placeholder="Search by name or location..." onkeyup="searchItems()">
+    <input type="text" id="searchInput" placeholder="Search by name (e.g. Wallet, Keys)..."
+           style="width:50%; padding:15px 25px; border-radius:50px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);"
+           onkeyup="searchItems()">
 
-    <p id="itemCount" style="color: white; margin-top: 10px;">Loading items...</p>
-    <a href="upload.html" style="color: lightskyblue; text-decoration: none; font-weight: bold;">➕ Add Another Item</a>
+    <div style="margin-top:20px;">
+        <div class="chip active" onclick="filterCategory('all')">All Items</div>
+        <div class="chip" onclick="filterCategory('electronics')">Electronics</div>
+        <div class="chip" onclick="filterCategory('keys')">Keys</div>
+        <div class="chip" onclick="filterCategory('wallet')">Wallets</div>
+        <div class="chip" onclick="filterCategory('books')">Books</div>
+    </div>
 
-    <button id="deleteAllBtn" onclick="deleteAllItems()" style="display:none; background:red; color:white; border:none; padding:10px; border-radius:5px; cursor:pointer; margin-left:10px;">
-        ⚠️ Delete ALL Records
+    <p id="itemCount" style="margin-top:20px; color:#888;">Loading available items...</p>
+
+    <button id="deleteAllBtn" onclick="deleteAllItems()" style="display:none; width:auto; padding:10px 30px; margin-top:20px; background:#ff4b4b; box-shadow:0 5px 15px rgba(255, 75, 75, 0.3);">
+        ⚠️ Admin: Wipe Database
     </button>
 </div>
 
 <div id="itemDisplay"></div>
 
 <script src="js/script.js"></script>
-
 </body>
 </html>

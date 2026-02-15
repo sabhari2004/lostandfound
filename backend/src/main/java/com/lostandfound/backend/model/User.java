@@ -5,54 +5,46 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "users")
 public class User {
-
     @Id
     private String id;
     private String name;
+
+    // Email will act as the unique identifier for KCT students
     private String email;
     private String password;
 
-    // 1. Empty Constructor (Required by MongoDB)
-    public User() {
-    }
+    /** * ROLE Logic:
+     * Use "ADMIN" for faculty/department heads
+     * Use "STUDENT" for MCA students
+     */
+    private String role;
 
-    // 2. Full Constructor (For us to use)
-    public User(String name, String email, String password) {
+    // Default Constructor for MongoDB
+    public User() {}
+
+    // Full Constructor for creating demo accounts manually in your code
+    public User(String name, String email, String password, String role) {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.role = (role == null) ? "STUDENT" : role.toUpperCase();
     }
 
-    // 3. Getters and Setters (So Java can read/write the data)
-    public String getId() {
-        return id;
-    }
+    // Getters & Setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getName() {
-        return name;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public String getRole() { return role; }
+    public void setRole(String role) {
+        this.role = (role != null) ? role.toUpperCase() : "STUDENT";
     }
 }

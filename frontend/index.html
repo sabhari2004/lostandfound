@@ -2,33 +2,78 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Lost & Found Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KCT Lost & Found | Home</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
 <nav>
-    <div class="logo">Lost & Found.</div>
+    <div class="logo" onclick="window.location.href='index.html'">KCT Lost & Found</div>
     <div class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="view.html">Browse</a>
-        <a href="login.html">Login</a>
+        <a href="index.html" class="active">Home</a>
+        <a href="view.html">Browse Items</a>
+        <a href="upload.html">Report Lost/Found</a>
+        <a href="contact.html">Contact</a>
 
-        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+        <a href="login.html" id="authLink" style="color: #0061ff; font-weight: 600;">Sign In</a>
+
+        <button class="theme-btn"><i class="fas fa-moon"></i></button>
     </div>
 </nav>
 
 <div class="hero-container">
-    <span style="background:#e6f7ff; color:#0061ff; padding:8px 20px; border-radius:30px; font-weight:600; font-size:0.9rem; margin-bottom:20px; animation:fadeIn 1s;">Campus Utility Tool</span>
+    <h1 class="hero-title">Lost Something?<br>Let's Find It.</h1>
+    <p class="hero-subtitle">The official student portal for reporting and recovering lost belongings at Kumaraguru College of Technology.</p>
 
-    <h1 class="hero-title">Lost It? List It.<br>Found It? Return It.</h1>
-    <p class="hero-subtitle">The official student portal for recovering lost belongings. Simple, fast, and community-driven.</p>
-
-    <div style="display:flex; gap:20px;">
-        <a href="view.html" class="cta-button">Browse Items</a>
-        <a href="login.html" class="cta-button" style="background:white; color:#333; box-shadow:0 5px 15px rgba(0,0,0,0.05);">Login to Report</a>
+    <div style="display: flex; gap: 20px;">
+        <a href="upload.html" class="cta-button">Report Item</a>
+        <a href="view.html" class="cta-button" style="background: transparent; border: 2px solid #0061ff; color: var(--text-color);">Browse Items</a>
     </div>
 </div>
 
+<div id="toast-container"></div>
+
+<div id="itemModal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 800px; flex-direction: row; height: 500px;">
+        <span class="close-modal" onclick="closeModal(event)">&times;</span>
+        <div class="modal-image" style="width: 50%; height: 100%;">
+            <img id="modalImg" src="" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div class="modal-details" style="width: 50%; padding: 40px; overflow-y: auto; text-align: left;">
+            <span id="modalStatus" class="status-badge" style="display: inline-block; margin-bottom: 15px;"></span>
+            <h2 id="modalTitle" style="color: var(--primary); margin-bottom: 10px;"></h2>
+            <p class="modal-info"><i class="fas fa-map-marker-alt"></i> <span id="modalLocation"></span></p>
+            <div style="border-top: 1px solid var(--border-color); margin: 20px 0;"></div>
+            <h4 style="color: var(--text-color); margin-bottom: 10px;">Description</h4>
+            <p id="modalDesc" style="color: var(--secondary-text); line-height: 1.6;"></p>
+            <a id="modalContact" href="#" class="submit-btn" style="display: block; text-align: center; text-decoration: none; margin-top: 30px;">Contact Finder</a>
+        </div>
+    </div>
+</div>
+
+<div id="profileModal" class="modal-overlay" onclick="closeProfile(event)">
+    <div class="modal-content" style="max-width: 420px; padding: 30px;">
+        <div class="profile-header">
+            <div class="profile-avatar"><i class="fas fa-user-circle"></i></div>
+            <div class="profile-info">
+                <h2 id="profileName">USER</h2>
+                <p id="profileEmail">student@kct.ac.in</p>
+            </div>
+        </div>
+        <div style="width: 100%;">
+            <button id="deleteAllBtn" class="logout-btn" onclick="deleteAllItems()" style="background: #333; margin-bottom: 10px; display: none;">
+                <i class="fas fa-exclamation-triangle"></i> Clear All Reports
+            </button>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout from Portal
+            </button>
+            <p onclick="closeProfileManual()" style="margin-top: 20px; text-align: center; cursor: pointer; color: var(--secondary-text); font-size: 0.9rem;">Close window</p>
+        </div>
+    </div>
+</div>
+
+<script src="js/script.js"></script>
 </body>
 </html>

@@ -10,6 +10,14 @@
     --secondary-text: #666;
     --hero-title-color: #1a1a1a;
     --input-bg: #f8f9fa;
+    --primary: #0061ff;
+    --primary-dark: #004ecc;
+
+    /* INPUT VARIABLES (Light Mode Default) */
+    --input-bg-color: #ffffff;
+    --input-text-color: #333333;
+    --input-border: #ccc;
+    --placeholder-color: #666;
 }
 
 [data-theme="dark"] {
@@ -21,6 +29,12 @@
     --secondary-text: #bbbbbb;
     --hero-title-color: #ffffff;
     --input-bg: #2d2d2d;
+
+    /* INPUT VARIABLES (Dark Mode Override) */
+    --input-bg-color: rgba(0, 0, 0, 0.6);
+    --input-text-color: #ffffff;
+    --input-border: rgba(255, 255, 255, 0.2);
+    --placeholder-color: rgba(255, 255, 255, 0.5);
 }
 
 /* ===========================
@@ -205,43 +219,6 @@ nav {
     font-size: 0.9rem;
 }
 
-input, textarea, select {
-    width: 100%;
-    padding: 14px 18px;
-    background: var(--input-bg);
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    color: var(--text-color);
-    font-size: 1rem;
-    outline: none;
-    transition: 0.3s;
-}
-
-input:focus, textarea:focus {
-    background: var(--card-bg);
-    border-color: #0061ff;
-    box-shadow: 0 0 0 4px rgba(0, 97, 255, 0.1);
-}
-
-.submit-btn {
-    width: 100%;
-    padding: 15px;
-    background: linear-gradient(135deg, #0061ff, #60efff);
-    color: white;
-    font-weight: 700;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: 0.3s;
-    margin-top: 10px;
-}
-
-.submit-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0, 97, 255, 0.2);
-}
-
 /* ===========================
    5. VIEW ITEMS GRID
    =========================== */
@@ -325,4 +302,245 @@ input:focus, textarea:focus {
     border-radius: 12px; margin-top: 10px; border-left: 5px solid #0061ff;
     box-shadow: 0 10px 30px rgba(0,0,0,0.15); font-weight: 500;
     animation: slideUp 0.3s forwards;
+}
+
+/* ===========================
+   7. BUTTONS & UPLOADS
+   =========================== */
+
+/* CUSTOM FILE UPLOAD BUTTON STYLE */
+#image { display: none; }
+
+.file-upload-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px dashed var(--primary);
+    border-radius: 8px;
+    color: var(--primary);
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.file-upload-btn:hover {
+    background: var(--primary);
+    color: #000;
+    box-shadow: 0 0 20px var(--primary);
+    border-style: solid;
+}
+
+/* ENSURE SIGN IN BUTTON HAS NEON STYLE */
+.btn-submit {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(to right, var(--primary-dark), var(--primary));
+    color: #000;
+    border: none;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+    transition: 0.3s;
+    font-size: 1rem;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 40px rgba(0, 242, 254, 0.6);
+}
+
+/* ===========================
+   8. UNIFIED INPUTS & DROPDOWNS
+   =========================== */
+
+.form-control, input, select, textarea {
+    background: var(--input-bg-color) !important;
+    color: var(--input-text-color) !important;
+    border: 1px solid var(--input-border) !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.95rem;
+    font-weight: 400;
+    transition: 0.3s;
+    border-radius: 12px;
+    padding: 14px 18px;
+    width: 100%;
+    outline: none;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 4px rgba(0, 97, 255, 0.1) !important;
+}
+
+::placeholder {
+    color: var(--placeholder-color) !important;
+    opacity: 0.7;
+}
+
+select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%230061ff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px top 50%;
+    background-size: 12px auto;
+    padding-right: 30px;
+}
+
+select option {
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-family: 'Poppins', sans-serif;
+    padding: 10px;
+}
+
+/* ===========================
+   9. ITEM DETAILS MODAL & PROFILE
+   =========================== */
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    z-index: 2000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    width: 95%;
+    max-width: 420px;
+    border-radius: 25px;
+    padding: 30px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    transform: scale(0.8);
+    transition: 0.3s;
+    border: 1px solid var(--border-color);
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+
+/* PROFILE HEADER (Fixes Overlap) */
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.profile-avatar {
+    font-size: 4rem;
+    color: #0061ff;
+    flex-shrink: 0;
+}
+
+.profile-info {
+    text-align: left;
+}
+
+.profile-info h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: var(--text-color);
+    font-weight: 700;
+}
+
+.profile-info p {
+    margin: 4px 0 0 0;
+    font-size: 0.9rem;
+    color: var(--secondary-text);
+}
+
+/* LOGOUT BUTTON */
+.logout-btn {
+    width: 100%;
+    padding: 15px;
+    background: #ff4757;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: 0.3s ease;
+    box-shadow: 0 5px 15px rgba(255, 71, 87, 0.2);
+}
+
+.logout-btn:hover {
+    background: #ff2e44;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 71, 87, 0.4);
+}
+
+/* NAVIGATION PROFILE BADGE */
+.nav-profile {
+    background: rgba(0, 97, 255, 0.1);
+    color: var(--primary);
+    padding: 8px 15px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--primary);
+    transition: 0.3s;
+}
+
+.nav-profile:hover {
+    background: var(--primary);
+    color: #fff;
+}
+/* Add this to style.css */
+.shake {
+    animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+/* Highlights the input border and background in red */
+.input-error {
+    border-color: #ff4757 !important;
+    background-color: rgba(255, 71, 87, 0.05) !important;
+    box-shadow: 0 0 0 4px rgba(255, 71, 87, 0.1) !important;
+}
+/* Update your form card in style.css to use variables */
+.form-card {
+    background: var(--card-bg); /* Changes from white to dark gray */
+    color: var(--text-color);   /* Changes from black to white */
+    border: 1px solid var(--border-color);
+    transition: 0.3s ease;
+}
+
+.input-group input {
+    background: var(--input-bg-color);
+    color: var(--input-text-color);
+    border: 1px solid var(--input-border);
 }

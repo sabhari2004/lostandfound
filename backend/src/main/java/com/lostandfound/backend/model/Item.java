@@ -8,18 +8,25 @@ public class Item {
 
     @Id
     private String id;
-    private String name;           // e.g., "Black Wallet"
-    private String location;       // e.g., "Library"
+
+    private String name;
+
+    //  NEW: Stores "LOST" or "FOUND"
+    private String status;
+
+    private String location;       // e.g., "KCT Library"
     private String description;
-    private String uploaderEmail;  // To know who found it
+    private String uploaderEmail;
     private String date;
-    private String image;          // We will store the image as a long text string (Base64)
+    private String image;          // Base64 string
 
     // Constructors
     public Item() {}
 
-    public Item(String name, String location, String description, String uploaderEmail, String date, String image) {
+    // Updated Constructor to include 'status'
+    public Item(String name, String status, String location, String description, String uploaderEmail, String date, String image) {
         this.name = name;
+        this.status = status;
         this.location = location;
         this.description = description;
         this.uploaderEmail = uploaderEmail;
@@ -33,6 +40,10 @@ public class Item {
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+
+    //  New Getter & Setter for Status
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }

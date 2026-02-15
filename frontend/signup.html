@@ -11,10 +11,13 @@
     <div class="logo">Lost & Found.</div>
     <div class="nav-links">
         <a href="index.html">Home</a>
-        <a href="view.html">Browse</a>
-        <a href="login.html">Login</a>
+        <a href="view.html">Browse Items</a>
+        <a href="upload.html">Report Lost/Found</a>
 
-        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+        <a href="contact.html">Contact</a>
+
+        <a href="login.html" id="authLink" style="color: #0061ff; font-weight: 600;">Sign In</a>
+        <button class="theme-btn"><i class="fas fa-moon"></i></button>
     </div>
 </nav>
 <div class="form-wrapper">
@@ -49,7 +52,28 @@
         </div>
     </div>
 </div>
-
+<div id="profileModal" class="modal-overlay" onclick="closeProfile(event)">
+    <div class="modal-content" style="max-width: 420px;">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="profile-info">
+                <h2 id="profileName">USER NAME</h2>
+                <p id="profileEmail">student@kct.ac.in</p>
+            </div>
+        </div>
+        <div style="width: 100%;">
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout from Portal
+            </button>
+            <p onclick="closeProfileManual()"
+               style="margin-top: 20px; text-align: center; cursor: pointer; color: var(--secondary-text); font-size: 0.9rem; font-weight: 500;">
+                Close window
+            </p>
+        </div>
+    </div>
+</div>
 <script src="js/script.js"></script>
 </body>
 </html>

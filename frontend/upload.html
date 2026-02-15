@@ -2,60 +2,144 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Report Item - Lost & Found</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Item | KCT Lost & Found</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
 <nav>
-    <div class="logo">Lost & Found.</div>
+    <div class="logo" onclick="window.location.href='index.html'">KCT Lost & Found</div>
     <div class="nav-links">
         <a href="index.html">Home</a>
-        <a href="upload.html">Upload</a>
-        <a href="view.html">Browse</a>
-        <a onclick="logout()" style="cursor:pointer; color:#ff4b4b;">Logout</a>
-
-        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+        <a href="view.html">Browse Items</a>
+        <a href="upload.html" class="active">Report Lost/Found</a>
+        <a href="contact.html">Contact</a>
+        <a href="login.html" id="authLink" style="color: #0061ff; font-weight: 600;">Sign In</a>
+        <button class="theme-btn"><i class="fas fa-moon"></i></button>
     </div>
 </nav>
 
 <div class="form-wrapper">
-    <div class="form-card" style="max-width: 600px;">
-        <h2>Report Found Item</h2>
-        <p>Please provide as much detail as possible to help the owner.</p>
+    <div class="form-card">
+        <h2>Report an Item</h2>
+        <p>Help us track lost or found items on campus.</p>
 
-        <div class="input-group">
-            <label>Item Name</label>
-            <input type="text" id="item" placeholder="e.g. Blue Dell Laptop">
-        </div>
-
-        <div style="display:flex; gap:20px;">
-            <div class="input-group" style="flex:1">
-                <label>Location Found</label>
-                <input type="text" id="location" placeholder="e.g. Library 2nd Floor">
+        <form onsubmit="event.preventDefault(); saveItem();">
+            <div class="form-group">
+                <label>Report Type</label>
+                <select id="status" required>
+                    <option value="LOST">I Lost an Item</option>
+                    <option value="FOUND">I Found an Item</option>
+                </select>
             </div>
-            <div class="input-group" style="flex:1">
-                <label>Your Email (for contact)</label>
-                <input type="email" id="uploaderEmail" placeholder="you@college.edu">
+
+            <div class="form-group">
+                <label>Item Name</label>
+                <input type="text" id="item" placeholder="e.g. Blue Dell Laptop" required>
             </div>
-        </div>
 
-        <div class="input-group">
-            <label>Description</label>
-            <textarea id="desc" rows="3" placeholder="Any distinguishing marks, stickers, etc."></textarea>
-        </div>
+            <div class="form-group">
+                <label>Campus Location</label>
+                <select id="location" required>
+                    <option value="" disabled selected>Select Location</option>
+                    <option value="Mahatma Gandhi Block">Mahatma Gandhi Block</option>
+                    <option value="Ramanujan Block">Ramanujan Block</option>
+                    <option value="Sir C.V. Raman Block">Sir C.V. Raman Block</option>
+                    <option value="KCT Library">KCT Library</option>
+                    <option value="Main Auditorium">Main Auditorium</option>
+                    <option value="Cafeteria / Food Court">Cafeteria / Food Court</option>
+                    <option value="Sports Ground">Sports Ground</option>
+                    <option value="Parking Area">Parking Area</option>
+                    <option value="Hostel Area">Hostel Area</option>
+                </select>
+            </div>
 
-        <div class="input-group">
-            <label>Upload Image</label>
-            <input type="file" id="image" accept="image/*">
-        </div>
+            <div class="form-group">
+                <label>Your KCT Email</label>
+                <input type="email" id="uploaderEmail" placeholder="student@kct.ac.in" required>
+            </div>
 
-        <button onclick="saveItem()" class="submit-btn">Submit Report</button>
-        <button onclick="window.location.href='view.html'" class="submit-btn" style="background:#333; margin-top:10px; color:white;">Cancel</button>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="desc" rows="3" placeholder="Distinguishing marks, color, brand..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Upload Image</label>
+                <input type="file" id="image" accept="image/*" onchange="updateFileName(this)" style="display:none;">
+                <label for="image" class="file-upload-btn">
+                    <i class="fas fa-cloud-upload-alt"></i> Choose Image File
+                </label>
+                <p id="fileNameDisplay" style="margin-top: 8px; font-size: 0.9rem; color: var(--primary); font-weight: 500; min-height: 20px;"></p>
+            </div>
+
+            <button class="btn-submit">Submit Report</button>
+        </form>
     </div>
 </div>
 
+<div id="toast-container"></div>
+
+<div id="itemModal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 800px; flex-direction: row; height: 500px;">
+        <span class="close-modal" onclick="closeModal(event)">&times;</span>
+        <div class="modal-image" style="width: 50%; height: 100%;"><img id="modalImg" src="" style="width: 100%; height: 100%; object-fit: cover;"></div>
+        <div class="modal-details" style="width: 50%; padding: 40px; overflow-y: auto; text-align: left;">
+            <span id="modalStatus" class="status-badge" style="display: inline-block; margin-bottom: 15px;"></span>
+            <h2 id="modalTitle" style="color: var(--primary); margin-bottom: 10px;"></h2>
+            <p class="modal-info"><i class="fas fa-map-marker-alt"></i> <span id="modalLocation"></span></p>
+            <div style="border-top: 1px solid var(--border-color); margin: 20px 0;"></div>
+            <h4 style="color: var(--text-color); margin-bottom: 10px;">Description</h4>
+            <p id="modalDesc" style="color: var(--secondary-text); line-height: 1.6;"></p>
+            <a id="modalContact" href="#" class="submit-btn" style="display: block; text-align: center; text-decoration: none; margin-top: 30px;">Contact Finder</a>
+        </div>
+    </div>
+</div>
+
+<div id="profileModal" class="modal-overlay" onclick="closeProfile(event)">
+    <div class="modal-content" style="max-width: 420px; padding: 30px;">
+        <div class="profile-header">
+            <div class="profile-avatar"><i class="fas fa-user-circle"></i></div>
+            <div class="profile-info">
+                <h2 id="profileName">USER</h2>
+                <p id="profileEmail">student@kct.ac.in</p>
+            </div>
+        </div>
+        <div style="width: 100%;">
+            <button id="deleteAllBtn" class="logout-btn" onclick="deleteAllItems()" style="background: #333; margin-bottom: 10px; display: none;">
+                <i class="fas fa-exclamation-triangle"></i> Clear All Reports
+            </button>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout from Portal
+            </button>
+            <p onclick="closeProfileManual()" style="margin-top: 20px; text-align: center; cursor: pointer; color: var(--secondary-text); font-size: 0.9rem;">Close window</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateFileName(input) {
+        const display = document.getElementById('fileNameDisplay');
+        if (input.files && input.files.length > 0) {
+            display.innerText = "Selected: " + input.files[0].name;
+        } else {
+            display.innerText = "";
+        }
+    }
+</script>
+<script>
+    // ✅ AUTHENTICATION GUARD: Run immediately on page load
+    (function() {
+        const userEmail = localStorage.getItem("userEmail");
+        if (!userEmail) {
+            // No user found, redirect to login with a warning
+            alert("You must login with your KCT email to report an item.");
+            window.location.href = "login.html";
+        }
+    })();
+</script>
 <script src="js/script.js"></script>
 </body>
 </html>

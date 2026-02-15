@@ -1,5 +1,7 @@
+const API_BASE_URL = "http://localhost:8080/api";
+
 // ===========================
-// THEME SWITCHER LOGIC
+// 0. THEME SWITCHER LOGIC (Preserved)
 // ===========================
 document.addEventListener("DOMContentLoaded", () => {
     // 1. Check LocalStorage for saved theme
@@ -8,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateIcon(savedTheme);
 
     // 2. Attach Click Event to the Button
-    const themeBtn = document.getElementById("themeToggle");
+    const themeBtn = document.querySelector(".theme-btn");
     if (themeBtn) {
         themeBtn.addEventListener("click", () => {
             const currentTheme = document.body.getAttribute("data-theme");
@@ -19,20 +21,64 @@ document.addEventListener("DOMContentLoaded", () => {
             updateIcon(newTheme);
         });
     }
+
+    // 3. ADMIN CHECK (New)
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    if(isAdmin) {
+        document.body.classList.add("admin-mode");
+    }
+
+    // NEW: Check Login State to show Profile
+    checkLoginState();
+
+    // Auto-load items if on view page
+    if (document.getElementById("itemDisplay")) {
+        loadItems();
+    }
+
+    // NEW: Auto-fill Email and make read-only on Upload Page
+    if (window.location.pathname.includes("upload.html")) {
+        const storedEmail = localStorage.getItem("userEmail");
+        const emailField = document.getElementById("uploaderEmail");
+        if (storedEmail && emailField) {
+            emailField.value = storedEmail;
+            emailField.readOnly = true;
+        }
+    }
 });
 
 function updateIcon(theme) {
-    const btn = document.getElementById("themeToggle");
+    const btn = document.querySelector(".theme-btn i");
     if (btn) {
-        // Uses innerHTML to render emojis correctly across all browsers
-        btn.innerHTML = theme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode";
+        btn.className = theme === "dark" ? "fas fa-sun" : "fas fa-moon";
     }
 }
 
-const API_BASE_URL = "http://localhost:8080/api";
+// ===========================
+// 1. ADMIN ACTIONS
+// ===========================
+async function deleteItem(itemId) {
+    if (!confirm("⚠️ ADMIN ACTION:\nAre you sure you want to PERMANENTLY delete this post?")) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/items/delete/${itemId}`, {
+            method: "DELETE"
+        });
+
+        if (response.ok) {
+            showToast("✅ Item Deleted Successfully!", "success");
+            loadItems();
+        } else {
+            showToast("❌ Failed to delete item.", "error");
+        }
+    } catch (error) {
+        console.error("Delete Error:", error);
+        showToast("❌ Server Error.", "error");
+    }
+}
 
 // ===========================
-// 0. UI HELPER: TOAST NOTIFICATIONS
+// 2. UI HELPER: TOAST NOTIFICATIONS
 // ===========================
 function showToast(message, type = "success") {
     let container = document.getElementById("toast-container");
@@ -48,7 +94,9 @@ function showToast(message, type = "success") {
     toast.innerText = message;
 
     if (type === "error") {
-        toast.style.borderLeft = "4px solid #ff4b2b";
+        toast.style.borderLeft = "5px solid #ff4757";
+    } else {
+        toast.style.borderLeft = "5px solid #2ed573";
     }
 
     container.appendChild(toast);
@@ -60,232 +108,314 @@ function showToast(message, type = "success") {
 }
 
 // ===========================
-// 1. FILTER CATEGORY (The "Chips" Feature)
+// 3. FILTER & SEARCH
 // ===========================
-function filterCategory(category) {
-    const chips = document.querySelectorAll('.chip');
-    chips.forEach(chip => chip.classList.remove('active'));
-
-    // Ensure event target exists before adding class
-    if (event && event.target) {
-        event.target.classList.add('active');
-    }
-
-    const searchInput = document.getElementById("searchInput");
-
-    if (category === 'all') {
-        if (searchInput) searchInput.value = "";
-        loadItems();
-    } else {
-        if (searchInput) {
-            searchInput.value = category;
-            searchItems();
-        }
-    }
-}
-
-// ===========================
-// 2. RENDER ITEMS (With Animation Delays)
-// ===========================
-function renderItems(items) {
-    const displayTarget = document.getElementById("itemDisplay");
-    if (!displayTarget) return;
-
-    const isAdmin = localStorage.getItem("isAdmin") === "true";
-    displayTarget.innerHTML = "";
-
-    if (items.length === 0) {
-        displayTarget.innerHTML = "<p style='color:#ccc; text-align:center; grid-column: span 3; font-size:1.2rem;'>No items found matching that search.</p>";
-        return;
-    }
-
-    items.forEach((item, index) => {
-        let imageUrl = item.image ? item.image : 'images/default.jpg';
-        let delay = index * 0.1;
-
-        // Dynamic Card Template
-        let card = `
-            <div class="item-card" style="animation-delay: ${delay}s">
-                <div style="overflow:hidden; height:200px;">
-                    <img src="${imageUrl}" class="item-img" alt="${item.name}" style="width:100%; height:100%; object-fit:cover;">
-                </div>
-
-                <div class="card-content">
-                    <span class="status-badge">AVAILABLE</span>
-
-                    <h3 style="margin-top:15px; font-size:1.3rem;">${item.name}</h3>
-                    <p style="font-size:0.9rem; margin-top:5px;">📍 ${item.location}</p>
-                    <p style="font-size:0.9rem; margin-top:5px; line-height:1.4;">${item.description}</p>
-                    <p style="font-size:11px; opacity:0.6; margin-top:10px;">Posted: ${item.date}</p>
-
-                    <button class="submit-btn" style="margin-top:15px; padding:10px;" onclick="alert('Contact Owner: ${item.uploaderEmail}')">
-                        Claim This Item
-                    </button>
-        `;
-
-        if (isAdmin) {
-            card += `
-                <button onclick="deleteItem('${item.id}')" style="background: linear-gradient(45deg, #ff416c, #ff4b2b); margin-top:10px; padding:10px; width:100%; border:none; border-radius:10px; color:white; cursor:pointer;">
-                    🗑️ Remove (Admin)
-                </button>
-            `;
-        }
-
-        card += `</div></div>`;
-        displayTarget.innerHTML += card;
-    });
-}
-
-// ===========================
-// 3. CORE FUNCTIONS (Login, Upload, Search)
-// ===========================
-async function loadItems() {
-    try {
-        const response = await fetch(`${API_BASE_URL}/items?t=${Date.now()}`);
-        const items = await response.json();
-
-        const countEl = document.getElementById("itemCount");
-        if(countEl) countEl.innerText = `${items.length} items found`;
-
-        renderItems(items);
-    } catch (error) {
-        console.error("Error loading items:", error);
-    }
-}
-
 async function searchItems() {
-    const searchInput = document.getElementById("searchInput");
-    if (!searchInput) return;
-
-    const query = searchInput.value;
-    if (!query) {
-        loadItems();
-        return;
-    }
-
+    const query = document.getElementById("searchInput").value.toLowerCase();
     try {
         const response = await fetch(`${API_BASE_URL}/items/search?query=${query}`);
         const items = await response.json();
         renderItems(items);
     } catch (error) {
-        console.error("Search Error:", error);
+        loadItems();
     }
 }
 
-async function registerUser() {
-    const name = document.getElementById("newName")?.value;
-    const email = document.getElementById("newEmail")?.value;
-    const pass = document.getElementById("newPassword")?.value;
-    const confirmPass = document.getElementById("confirmPassword")?.value;
-
-    if (!name || !email || !pass) { showToast("Please fill in all fields", "error"); return; }
-    if (pass !== confirmPass) { showToast("Passwords do not match!", "error"); return; }
+async function filterItems(filterType) {
+    const chips = document.querySelectorAll('.chip');
+    chips.forEach(c => c.classList.remove('active'));
+    if(event && event.target) event.target.classList.add('active');
 
     try {
-        const response = await fetch(`${API_BASE_URL}/users/register`, {
-            method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, email, password: pass })
-        });
-        if (response.ok) {
-            alert("Account created! Redirecting...");
-            window.location.href = "login.html";
-        } else { showToast("Registration Failed!", "error"); }
-    } catch (e) { showToast("Backend Error", "error"); }
+        const response = await fetch(`${API_BASE_URL}/items/filter?${filterType === 'LOST' || filterType === 'FOUND' ? 'status=' + filterType : 'location=' + filterType}`);
+
+        if(filterType === 'ALL') {
+             loadItems();
+             return;
+        }
+
+        const items = await response.json();
+        renderItems(items);
+    } catch (error) {
+        console.error("Filter error:", error);
+        loadItems();
+    }
 }
 
-async function loginUser() {
-    const email = document.getElementById("email")?.value;
-    const password = document.getElementById("password")?.value;
-    if (!email || !password) { showToast("Fill all fields", "error"); return; }
+// ===========================
+// 4. RENDER ITEMS
+// ===========================
+function renderItems(items) {
+    const displayTarget = document.getElementById("itemDisplay");
+    if (!displayTarget) return;
 
-    // Admin Bypass Credentials
-    if (email === "rsnithyashree22bit071@gmail.com" && password === "Lf123") {
-        localStorage.setItem("userEmail", email);
-        localStorage.setItem("isAdmin", "true");
-        window.location.href = "view.html";
+    displayTarget.innerHTML = "";
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+
+    if (items.length === 0) {
+        displayTarget.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: var(--secondary-text); font-size: 1.1rem;'>No items found matching your criteria.</p>";
+        return;
+    }
+
+    items.forEach((item, index) => {
+        let imageUrl = item.image ? item.image : 'https://via.placeholder.com/300x200?text=No+Image';
+        let delay = index * 0.1;
+        let statusText = item.status || "REPORT";
+        let statusColor = statusText === "LOST" ? "#ff4757" : "#2ed573";
+        let statusBg = statusText === "LOST" ? "rgba(255, 71, 87, 0.1)" : "rgba(46, 213, 115, 0.1)";
+        const itemSafe = encodeURIComponent(JSON.stringify(item));
+
+        let cardHTML = `
+            <div class="item-card" style="animation-delay: ${delay}s">
+                <div style="height: 200px; overflow: hidden; position: relative; cursor: pointer;" onclick="openItemModal('${itemSafe}')">
+                    <img src="${imageUrl}" style="width: 100%; height: 100%; object-fit: cover;">
+                    ${isAdmin ? `
+                    <button onclick="event.stopPropagation(); deleteItem('${item.id}')"
+                            style="position: absolute; top: 10px; right: 10px; background: #ff4757; color: white; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.8rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: 0.3s;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    ` : ''}
+                </div>
+                <div class="card-content" onclick="openItemModal('${itemSafe}')" style="cursor: pointer;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span class="status-badge" style="color: ${statusColor}; background: ${statusBg}; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
+                            ${statusText}
+                        </span>
+                        <small style="color: var(--secondary-text); font-size: 0.8rem;">${item.date ? item.date.split(',')[0] : 'Recently'}</small>
+                    </div>
+                    <h3 style="margin-bottom: 5px; font-size: 1.2rem;">${item.name}</h3>
+                    <p style="margin-bottom: 8px; color: var(--secondary-text); font-size: 0.9rem;">
+                        <i class="fas fa-map-marker-alt" style="color: #0061ff; margin-right: 5px;"></i> ${item.location}
+                    </p>
+                    <p style="font-size: 0.9rem; line-height: 1.5; margin-bottom: 15px; color: var(--text-color);">${item.description}</p>
+                    <button class="submit-btn" style="width: 100%; padding: 10px; border-radius: 8px;">View Details</button>
+                </div>
+            </div>
+        `;
+        displayTarget.innerHTML += cardHTML;
+    });
+}
+
+// ===========================
+// 5. LOAD ITEMS
+// ===========================
+async function loadItems() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/items`);
+        const items = await response.json();
+        renderItems(items);
+    } catch (error) {
+        console.error("Error loading items:", error);
+        showToast("Failed to load items. Is backend running?", "error");
+    }
+}
+
+// ===========================
+// 6. UPLOAD ITEM
+// ===========================
+async function saveItem() {
+    const itemIn = document.getElementById("item");
+    const statusIn = document.getElementById("status");
+    const locationIn = document.getElementById("location");
+    const imgIn = document.getElementById("image");
+
+    if(!itemIn.value || !locationIn.value || !statusIn.value) {
+        showToast("Please fill all required fields!", "error");
+        return;
+    }
+
+    const reader = new FileReader();
+    if (!imgIn.files[0]) {
+         submitData(itemIn.value, statusIn.value, locationIn.value, null);
+         return;
+    }
+
+    reader.onload = async () => {
+        submitData(itemIn.value, statusIn.value, locationIn.value, reader.result);
+    };
+    reader.readAsDataURL(imgIn.files[0]);
+}
+
+async function submitData(name, status, location, image) {
+    const payload = {
+        name: name,
+        status: status,
+        location: location,
+        description: document.getElementById("desc").value,
+        uploaderEmail: document.getElementById("uploaderEmail").value,
+        date: new Date().toLocaleString(),
+        image: image
+    };
+
+    try {
+        await fetch(`${API_BASE_URL}/items/add`, {
+            method: "POST",
+            headers:{"Content-Type":"application/json"},
+            body: JSON.stringify(payload)
+        });
+        showToast("Report Submitted Successfully!");
+        setTimeout(() => window.location.href = "view.html", 1500);
+    } catch (error) {
+        console.error("Error:", error);
+        showToast("Failed to submit report.", "error");
+    }
+}
+
+// ===========================
+// 7. UPDATED: MONGODB LOGIN LOGIC
+// ===========================
+async function loginUser() {
+    const email = document.getElementById("email").value;
+    const passwordInput = document.getElementById("password");
+    const passwordError = document.getElementById("passwordError");
+
+    // 1. Reset visuals before trying again
+    passwordError.style.display = "none";
+    passwordInput.classList.remove("input-error");
+
+    if (!email || !passwordInput.value) {
+        showToast("Please enter both fields", "error");
         return;
     }
 
     try {
         const response = await fetch(`${API_BASE_URL}/users/login`, {
-            method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password: passwordInput.value })
         });
+
         if (response.ok) {
-            const user = await response.json();
-            localStorage.setItem("userEmail", user.email);
-            localStorage.setItem("isAdmin", "false");
-            window.location.href = "view.html";
-        } else { showToast("Invalid Credentials", "error"); }
-    } catch (e) { showToast("Login Error", "error"); }
+            const userData = await response.json();
+            localStorage.setItem("userEmail", userData.email);
+            localStorage.setItem("userName", userData.name);
+            localStorage.setItem("isAdmin", userData.role === "ADMIN" ? "true" : "false");
+
+            showToast(`Welcome back, ${userData.name}!`);
+            setTimeout(() => window.location.href = "view.html", 1000);
+        } else {
+            // 2. Google-style Red Highlight
+            passwordError.style.display = "block";
+            passwordInput.classList.add("input-error");
+            passwordInput.value = "";
+            passwordInput.focus();
+        }
+    } catch (e) {
+        showToast("Server connection failed.", "error");
+    }
 }
 
-function saveItem() {
-    const itemEl = document.getElementById("item");
-    const imgEl = document.getElementById("image");
-    if (!itemEl || !imgEl.files[0]) { showToast("Missing info", "error"); return; }
-
-    const reader = new FileReader();
-    reader.onload = async function () {
-        const payload = {
-            name: itemEl.value,
-            location: document.getElementById("location").value,
-            description: document.getElementById("desc").value,
-            uploaderEmail: document.getElementById("uploaderEmail").value,
-            date: new Date().toLocaleString(),
-            image: reader.result
-        };
-        try {
-            await fetch(`${API_BASE_URL}/items/add`, {
-                method: "POST", headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-            alert("Uploaded Successfully!");
-            window.location.href = "view.html";
-        } catch (e) { showToast("Upload Error", "error"); }
-    };
-    reader.readAsDataURL(imgEl.files[0]);
-}
-
-// ===========================
-// 4. ADMIN ACTIONS
-// ===========================
-async function deleteItem(itemId) {
-    if (!confirm("ADMIN: Delete this post?")) return;
-    try {
-        await fetch(`${API_BASE_URL}/items/delete/${itemId}`, { method: "DELETE" });
-        showToast("Deleted!", "success");
-        loadItems();
-    } catch (e) { showToast("Delete Error", "error"); }
-}
-
-async function deleteAllItems() {
-    const password = prompt("ADMIN CHECK: Enter password to WIPE DATA:");
-    if (password !== "Lf123") { showToast("Wrong password!", "error"); return; }
-    try {
-        await fetch(`${API_BASE_URL}/items/deleteAll`, { method: "DELETE" });
-        showToast("Database Wiped", "success");
-        loadItems();
-    } catch (e) { showToast("Error wiping DB", "error"); }
-}
+// 3. Clear the red highlight as soon as they start typing
+document.getElementById("password").addEventListener("input", function() {
+    this.classList.remove("input-error");
+    document.getElementById("passwordError").style.display = "none";
+});
 
 function logout() {
     localStorage.clear();
-    window.location.href = "login.html";
+    window.location.href = "index.html";
 }
 
 // ===========================
-// 5. AUTO-RUN ON PAGE LOAD
+// 8. PROFILE & MODAL CONTROLS
 // ===========================
-window.onload = function() {
-    // Admin features visibility
-    if (localStorage.getItem("isAdmin") === "true") {
-        const btn = document.getElementById("deleteAllBtn");
-        if (btn) btn.style.display = "inline-block";
+
+function checkLoginState() {
+    const authLink = document.getElementById("authLink");
+    const userEmail = localStorage.getItem("userEmail");
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+
+    if (authLink && userEmail) {
+        authLink.innerHTML = `<i class="fas fa-user-circle"></i> Profile`;
+        authLink.href = "#";
+        authLink.classList.add("nav-profile");
+
+        authLink.onclick = (e) => {
+            e.preventDefault();
+            openProfile();
+        };
+
+        const deleteAllBtn = document.getElementById("deleteAllBtn");
+        if (isAdmin && deleteAllBtn) {
+            deleteAllBtn.style.display = "flex";
+        }
+    }
+}
+
+function openProfile() {
+    const email = localStorage.getItem("userEmail") || "user@kct.ac.in";
+    const name = localStorage.getItem("userName") || "KCT Student";
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    const profileModal = document.getElementById("profileModal");
+    if(!profileModal) return;
+
+    document.getElementById("profileEmail").innerText = email;
+
+    // ✅ Use real name from MongoDB
+    if (isAdmin) {
+        document.getElementById("profileName").innerText = "ADMIN PORTAL";
+    } else {
+        document.getElementById("profileName").innerText = name.toUpperCase();
     }
 
-    // Load items only if on the browse page
-    if (window.location.pathname.endsWith("view.html")) {
-        loadItems();
+    profileModal.classList.add("active");
+}
+
+function closeProfile(event) {
+    if (event.target.classList.contains("modal-overlay")) {
+        document.getElementById("profileModal").classList.remove("active");
     }
-};
+}
+
+function closeProfileManual() {
+    document.getElementById("profileModal").classList.remove("active");
+}
+
+function openItemModal(itemEncoded) {
+    const item = JSON.parse(decodeURIComponent(itemEncoded));
+    const modal = document.getElementById("itemModal");
+    if(!modal) return;
+
+    document.getElementById("modalImg").src = item.image || 'https://via.placeholder.com/300x200?text=No+Image';
+    document.getElementById("modalTitle").innerText = item.name;
+    document.getElementById("modalLocation").innerText = item.location;
+    document.getElementById("modalDesc").innerText = item.description || "No description provided.";
+
+    const statusEl = document.getElementById("modalStatus");
+    if (statusEl) {
+        statusEl.innerText = item.status || "REPORT";
+        statusEl.style.color = item.status === "LOST" ? "#ff4757" : "#2ed573";
+    }
+
+    const contactBtn = document.getElementById("modalContact");
+    contactBtn.href = `mailto:${item.uploaderEmail}?subject=Regarding ${item.name}`;
+
+    modal.classList.add("active");
+}
+
+function closeModal(event) {
+    if (event.target.classList.contains("modal-overlay") || event.target.classList.contains("close-modal")) {
+        document.getElementById("itemModal").classList.remove("active");
+    }
+}
+
+// ===========================
+// 9. GLOBAL ADMIN ACTIONS
+// ===========================
+async function deleteAllItems() {
+    if (!confirm("🚨 WARNING: This will permanently delete EVERY report in the database. Continue?")) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/items/delete-all`, { method: "DELETE" });
+        if (response.ok) {
+            showToast("🧹 Database Cleared Successfully!");
+            loadItems();
+            closeProfileManual();
+        } else {
+            showToast("❌ Failed to clear database.", "error");
+        }
+    } catch (error) {
+        console.error("Delete All Error:", error);
+        showToast("❌ Server Error.", "error");
+    }
+}

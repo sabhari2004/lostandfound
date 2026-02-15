@@ -2,45 +2,196 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login - Lost & Found</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In | KCT Lost & Found</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Base Background with Campus Image */
+        body.login-page {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+                        url('back.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            transition: background 0.5s ease;
+        }
+
+        /* Transparent Blur Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        /* Responsive Login Widget */
+        .login-widget {
+            /* ✅ FIXED: Now uses variables for full theme support */
+            background: var(--card-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 45px 40px;
+            border-radius: 35px;
+            border: 1px solid var(--border-color);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.3);
+            animation: widgetPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s ease;
+        }
+
+        @keyframes widgetPop {
+            from { opacity: 0; transform: scale(0.9) translateY(30px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .login-widget h2 {
+            color: var(--text-color); /* ✅ THEME SYNCED */
+            font-size: 1.7rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .login-widget p.tagline {
+            color: var(--secondary-text); /* ✅ THEME SYNCED */
+            font-size: 0.85rem;
+            margin-bottom: 30px;
+        }
+
+        /* Input Box Styling */
+        .input-box {
+            position: relative;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-box i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--secondary-text);
+            z-index: 2;
+        }
+
+        .input-box input {
+            width: 100%;
+            padding: 14px 15px 14px 48px;
+            background: var(--input-bg-color); /* ✅ THEME SYNCED */
+            border: 1px solid var(--input-border);
+            border-radius: 18px;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-box input:focus {
+            border-color: #0084ff;
+            box-shadow: 0 0 15px rgba(0, 132, 255, 0.2);
+        }
+
+        /* Highlight border for incorrect password */
+        .input-error {
+            border-color: #ff4757 !important;
+            background-color: rgba(255, 71, 87, 0.05) !important;
+            box-shadow: 0 0 0 4px rgba(255, 71, 87, 0.1) !important;
+        }
+
+        /* Blue Glowing Button */
+        .btn-glow {
+            width: 100%;
+            padding: 15px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0, 123, 255, 0.4);
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .btn-glow:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 132, 255, 0.6);
+        }
+
+        .footer-links {
+            margin-top: 25px;
+            font-size: 0.8rem;
+            color: var(--secondary-text);
+        }
+
+        .footer-links a {
+            color: #0084ff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
 </head>
-<body>
+<body class="login-page">
 
 <nav>
-    <div class="logo">Lost & Found.</div>
-    <div class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="view.html">Browse</a>
-        <a href="login.html">Login</a>
-
-        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+    <div class="logo" onclick="window.location.href='index.html'" style="padding: 15px 5%; cursor: pointer; color: #fff; font-weight: 700; font-size: 1.4rem;">
+        KCT Lost & Found
+    </div>
+    <div class="nav-links" style="padding-right: 5%;">
+        <a href="contact.html" style="color: #fff; text-decoration: none; margin-right: 20px; font-size: 0.9rem;">Contact Admin</a>
+        <button class="theme-btn" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 8px 12px; border-radius: 50%; cursor: pointer;">
+            <i class="fas fa-moon"></i>
+        </button>
     </div>
 </nav>
 
-<div class="form-wrapper">
-    <div class="form-card">
-        <h2>Welcome Back</h2>
-        <p>Enter your credentials to access your account.</p>
+<div class="login-widget">
+    <h2>Welcome Back</h2>
+    <p class="tagline">Sign in to manage your campus reports</p>
 
-        <div class="input-group">
-            <label>Email Address</label>
-            <input type="email" id="email" placeholder="student@college.edu">
+    <form onsubmit="event.preventDefault(); loginUser();">
+        <div class="input-box">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="email" placeholder="KCT Email Address" required>
         </div>
 
-        <div class="input-group">
-            <label>Password</label>
-            <input type="password" id="password" placeholder="••••••••">
+        <div class="input-box">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="password" placeholder="Account Password" required>
+            <div id="passwordError" style="color: #ff4757; font-size: 0.8rem; margin-top: 8px; display: none; text-align: left;">
+                <i class="fas fa-exclamation-circle"></i> Incorrect password. Try again.
+            </div>
         </div>
 
-        <button onclick="loginUser()" class="submit-btn">Login</button>
+        <button type="submit" class="btn-glow">Sign In to Dashboard</button>
 
-        <div class="form-link">
-            Don't have an account? <a href="register.html">Sign Up</a>
+        <div class="footer-links">
+            Don't have an account? <a href="contact.html">Contact Admin</a>
+            <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px; opacity: 0.6;">
+                KCT © 2026 Lost & Found
+            </div>
         </div>
-    </div>
+    </form>
 </div>
+
+<div id="toast-container"></div>
 
 <script src="js/script.js"></script>
 </body>

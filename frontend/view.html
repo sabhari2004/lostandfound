@@ -2,47 +2,93 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Browse Items - Lost & Found</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Items | KCT Lost & Found</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="view-page">
+<body>
 
 <nav>
-    <div class="logo">Lost & Found.</div>
+    <div class="logo" onclick="window.location.href='index.html'">KCT Lost & Found</div>
     <div class="nav-links">
         <a href="index.html">Home</a>
-        <a href="upload.html">Upload</a>
-        <a href="view.html">Browse</a>
-        <a onclick="logout()" style="cursor:pointer; color:#ff4b4b;">Logout</a>
+        <a href="view.html" class="active">Browse Items</a>
+        <a href="upload.html">Report Lost/Found</a>
+        <a href="contact.html">Contact</a>
 
-        <button id="themeToggle" class="theme-btn">🌙 Dark Mode</button>
+        <a href="login.html" id="authLink" style="color: #0061ff; font-weight: 600;">Sign In</a>
+        <button class="theme-btn"><i class="fas fa-moon"></i></button>
     </div>
 </nav>
 
 <div class="search-container">
-    <h2 style="margin-bottom:20px; font-size:2rem; color:#333;">Find Missing Items</h2>
+    <h2 style="margin-bottom: 20px;">Browse Campus Items</h2>
 
-    <input type="text" id="searchInput" placeholder="Search by name (e.g. Wallet, Keys)..."
-           style="width:50%; padding:15px 25px; border-radius:50px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);"
-           onkeyup="searchItems()">
-
-    <div style="margin-top:20px;">
-        <div class="chip active" onclick="filterCategory('all')">All Items</div>
-        <div class="chip" onclick="filterCategory('electronics')">Electronics</div>
-        <div class="chip" onclick="filterCategory('keys')">Keys</div>
-        <div class="chip" onclick="filterCategory('wallet')">Wallets</div>
-        <div class="chip" onclick="filterCategory('books')">Books</div>
+    <div style="margin-bottom: 20px;">
+        <input type="text" id="searchInput" placeholder="Search for items (e.g. Wallet, ID Card)..." onkeyup="searchItems()" style="max-width: 500px;">
     </div>
 
-    <p id="itemCount" style="margin-top:20px; color:#888;">Loading available items...</p>
-
-    <button id="deleteAllBtn" onclick="deleteAllItems()" style="display:none; width:auto; padding:10px 30px; margin-top:20px; background:#ff4b4b; box-shadow:0 5px 15px rgba(255, 75, 75, 0.3);">
-        ⚠️ Admin: Wipe Database
-    </button>
+    <div class="filter-chips">
+        <span class="chip active" onclick="filterItems('ALL')">All</span>
+        <span class="chip" onclick="filterItems('LOST')">Lost</span>
+        <span class="chip" onclick="filterItems('FOUND')">Found</span>
+        <span class="chip" onclick="filterItems('Mahatma Gandhi Block')">MG Block</span>
+        <span class="chip" onclick="filterItems('KCT Library')">Library</span>
+    </div>
 </div>
 
-<div id="itemDisplay"></div>
+<div id="itemDisplay">
+</div>
 
+<div id="toast-container"></div>
+
+<div id="itemModal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 800px; flex-direction: row; height: 500px;">
+        <span class="close-modal" onclick="closeModal(event)">&times;</span>
+
+        <div class="modal-image" style="width: 50%; height: 100%;">
+            <img id="modalImg" src="" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+
+        <div class="modal-details" style="width: 50%; padding: 40px; overflow-y: auto; text-align: left;">
+            <span id="modalStatus" class="status-badge" style="display: inline-block; margin-bottom: 15px;"></span>
+            <h2 id="modalTitle" style="color: var(--primary); margin-bottom: 10px;"></h2>
+            <p class="modal-info"><i class="fas fa-map-marker-alt"></i> <span id="modalLocation"></span></p>
+
+            <div style="border-top: 1px solid var(--border-color); margin: 20px 0;"></div>
+
+            <h4 style="color: var(--text-color); margin-bottom: 10px;">Description</h4>
+            <p id="modalDesc" style="color: var(--secondary-text); line-height: 1.6;"></p>
+
+            <a id="modalContact" href="#" class="submit-btn" style="display: block; text-align: center; text-decoration: none; margin-top: 30px;">
+                Contact Finder
+            </a>
+        </div>
+    </div>
+</div>
+
+<div id="profileModal" class="modal-overlay" onclick="closeProfile(event)">
+    <div class="modal-content" style="max-width: 420px; padding: 30px;">
+        <div class="profile-header">
+            <div class="profile-avatar"><i class="fas fa-user-circle"></i></div>
+            <div class="profile-info">
+                <h2 id="profileName">ADMIN</h2>
+                <p id="profileEmail">admin@kct.ac.in</p>
+            </div>
+        </div>
+        <div style="width: 100%;">
+            <button id="deleteAllBtn" class="logout-btn" onclick="deleteAllItems()" style="background: #333; margin-bottom: 10px; display: none;">
+                <i class="fas fa-exclamation-triangle"></i> Clear All Reports
+            </button>
+
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout from Portal
+            </button>
+            <p onclick="closeProfileManual()" style="margin-top: 20px; text-align: center; cursor: pointer; color: var(--secondary-text); font-size: 0.9rem;">Close window</p>
+        </div>
+    </div>
+</div>
 <script src="js/script.js"></script>
 </body>
 </html>
